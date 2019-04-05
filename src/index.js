@@ -2,27 +2,40 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-class Square extends React.Component {
-    constructor(props) {
-        super(props);   // Always this line at the start of a constructor
-        this.state = {
-            value: null,
-        };
-    }
-    render() {
-        return (
-            <button 
-                className="square" 
-                onClick={() => { alert('Clicked button cell: ' + this.props.value); this.setState({value: 'X'});}}>
-                {this.state.value}
-            </button>
-        );
-    }
+// Function Component (contains only the 'render' function)
+function Square(props) {
+    return (
+        <button 
+            className="square"
+            onClick={() => { alert('Clicked button cell: ' + props.valueCell); props.onClick();}} 
+            //onClick={props.onClick}
+            >
+            {props.value}
+        </button>
+    );
 }
   
+// Parent Component (Takes control of children's states)
 class Board extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            squares: Array(9).fill(null),
+        };
+    }
+
+    handleClick(i) {
+        const squares = this.state.squares.slice();     // Create a copy of the state's squares -> immutability
+        squares[i] = 'X';
+        this.setState({squares: squares});
+    }
+
     renderSquare(i) {
-        return <Square value={i} />;
+        return <Square 
+            value={this.state.squares[i]} 
+            valueCell={i}
+            onClick={() => this.handleClick(i)}
+        />;
     }
   
     render() {
